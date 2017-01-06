@@ -35,7 +35,7 @@ You can also subscribe to my posts via [Atom]({{site.baseurl}}/atom.xml) or [RSS
 
 ## Links:
 
-- [Curriculum Vitae]({{site.baseurl}}/pdfs/cv.pdf)
+- [Curriculum Vitae]({{site.baseurl}}/pdfs/mathieubray-cv.pdf)
 - [Publications](https://scholar.google.com/citations?user=CVB1O1oAAAAJ&hl=en)
 - [Twitter](http://twitter.com/mathieubray)
 - [LinkedIn](http://www.linkedin.com/in/mathieubray) 
