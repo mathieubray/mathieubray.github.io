@@ -78,6 +78,6 @@ gganimate(p)
 ```
 
 
-![No GIF???](/images/HeightAndWeight.gif) 
+![No GIF???](/plots/HeightAndWeight.gif) 
 
 Hurray!

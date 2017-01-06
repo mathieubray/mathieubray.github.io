@@ -22,7 +22,7 @@ convert.to.blog.post <- function(filename){
   # Set options for output
   opts_knit$set(out.format='markdown') 
   opts_knit$set(base.url = "/")
-  opts_chunk$set(fig.path = 'images/')           
+  opts_chunk$set(fig.path = 'plots/')           
   opts_chunk$set(fig.width  = 8.5,
                  fig.height = 5.25)
   
