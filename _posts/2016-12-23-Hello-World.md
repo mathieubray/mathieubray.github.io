@@ -5,9 +5,8 @@ date: "2016-12-23"
 tags: [R, hockey]
 layout: post
 ---
-*This post was updated on 2017-01-12*
+*This post was updated on 2017-02-07*
 
-## Hello World!
 
 I plan on using this space to post my musings on statistics that, shall we say, fall outside of the hallowed halls of academia. For the most part, this will mean lots of R, and lots of hockey and Twitter data. I hope to share something interesting every few weeks, though with my ultra hectic (wink) grad student life, we'll see how long I can keep that promise...
 
