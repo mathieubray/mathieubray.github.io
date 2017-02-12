@@ -37,7 +37,7 @@ You can also subscribe to my posts via [Atom]({{site.baseurl}}/atom.xml) or [RSS
 - [Optimization and Simulation of a Kidney Paired Donation Program ](http://kecc.sph.umich.edu/projects/optimization-and-simulation-kidney-paired-donation-program) 
 - [Song Lab](http://www.umich.edu/~songlab/)
 - [Curriculum Vitae]({{site.baseurl}}/pdfs/mathieubray-cv.pdf)
-- [Publications](https://scholar.google.com/citations?user=CVB1O1oAAAAJ&hl=en)
+- [Google Scholar](https://scholar.google.com/citations?user=CVB1O1oAAAAJ&hl=en)
 - [Twitter](http://twitter.com/mathieubray)
 - [LinkedIn](http://www.linkedin.com/in/mathieubray) 
 - [GitHub](http://github.com/mathieubray)
