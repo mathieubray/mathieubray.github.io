@@ -5,6 +5,9 @@ date: "2017-02-11"
 tags: [R, hockey, text analysis]
 layout: post
 ---
+*This post was updated on 2017-03-06*
+
+*Full code for this analysis is availabile on [Github](https://github.com/mathieubray/Hockey/tree/master/CoachTranscripts)*
 
 In the [2016 NHL playoffs](https://en.wikipedia.org/wiki/2016_Stanley_Cup_playoffs), the Eastern Conference champion [Pittsburgh Penguins](https://www.nhl.com/penguins), coached by Mike Sullivan, defeated the Western Conference champion [San Jose Sharks](https://www.nhl.com/sharks), coached by Peter DeBoer, in a best of seven series to win the fourth Stanley Cup in their franchise's history. In a series like this, with many ups and downs for both teams, the coach, serving as a spokesman for his team to the media, is under especially high pressure. Can this pressure be gleaned through a text analysis on their words in pre- and post-game interviews? Are there differences between the two coaches in terms of how they relay their mindset to the public? In my eternal attempt to shoehorn hockey concepts into data science problems, I will spend some time here showing how to apply some basic text analysis techniques to a set of NHL coach pre- and post-game press interviews scraped from the web.
 
@@ -74,7 +77,7 @@ extract.interview.text <- function(url){
   # Extract date (in second string)
   date <- mdy(raw.text[2])
   
-  # Third string contains the interview subject, though the everything is squashed together
+  # Third string contains the interview subject, though everything is squashed together
   # Put spaces between capital letters, split based on whitespace, then combine the second and fourth token as the subject
   tokens <- unlist(strsplit(gsub('([[:upper:]])',' \\1',raw.text[3]),"[[:space:]]"))
   subject <- paste(tokens[2],tokens[4])
