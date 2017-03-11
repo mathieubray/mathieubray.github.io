@@ -153,7 +153,7 @@ head(coaches.words,n=12)
 ```
 
 ```
-## # A tibble: 12 ? 5
+## # A tibble: 12 × 5
 ##          Date       Subject AfterGame                Label       Word
 ##         <chr>         <chr>     <lgl>                <chr>      <chr>
 ## 1  2016-06-12 Mike Sullivan      TRUE 2016-06-12 Post-Game      learn
@@ -183,13 +183,7 @@ coaches.word.count <- coaches.words %>%
   group_by(Subject) %>%
   top_n(20) %>%
   rename(Occurrences = n)
-```
 
-```
-## Error in count(., Word, Subject): object 'Word' not found
-```
-
-```r
 # Set team colors
 team.colors <- c("#c5b358","#007889") # Pittsburgh Gold and San Jose Teal respectively
   
@@ -203,9 +197,7 @@ ggplot(data=coaches.word.count,aes(x=Word,y=Occurrences,fill=Subject)) +
   theme_bw(15)
 ```
 
-```
-## Error in ggplot(data = coaches.word.count, aes(x = Word, y = Occurrences, : object 'coaches.word.count' not found
-```
+![plot of chunk unnamed-chunk-6](/plots/unnamed-chunk-6-1.png)
 
 ```r
 # Word clouds for each coach
@@ -215,9 +207,7 @@ coaches.words %>%
   with(wordcloud(Word,n,max.words=100,colors=team.colors[1]))
 ```
 
-```
-## Error in count(., Word): object 'Word' not found
-```
+![plot of chunk unnamed-chunk-6](/plots/unnamed-chunk-6-2.png)
 
 ```r
 coaches.words %>%
@@ -226,9 +216,7 @@ coaches.words %>%
   with(wordcloud(Word,n,max.words=100,colors=team.colors[2]))
 ```
 
-```
-## Error in count(., Word): object 'Word' not found
-```
+![plot of chunk unnamed-chunk-6](/plots/unnamed-chunk-6-3.png)
 
 These words are more or less what you would expect a hockey coach to be saying in an interview. The most frequent word used by each coach is 'game', and they both use several derivatives of the word 'play'. There are also plenty of references to hockey-specific subjects, such as 'puck' and 'net'. All in all, no real surprises (or insight) here.
 
@@ -251,13 +239,7 @@ coach.ratios <- coaches.words %>%
   mutate(Team = ifelse(LogRatio > 0,"Pittsburgh","San Jose")) %>%
   top_n(10, abs(LogRatio)) %>% # Get top 10 words in each direction
   ungroup()
-```
 
-```
-## Error in count(., Word, Subject): object 'Word' not found
-```
-
-```r
 # Plot of top 10 words most often used by each coach relative to the other
 ggplot(data=coach.ratios,aes(x=reorder(Word,LogRatio),y=LogRatio,fill=Team)) +
   geom_bar(stat="identity",show.legend=F) +
@@ -268,9 +250,7 @@ ggplot(data=coach.ratios,aes(x=reorder(Word,LogRatio),y=LogRatio,fill=Team)) +
   theme_bw(15)
 ```
 
-```
-## Error in ggplot(data = coach.ratios, aes(x = reorder(Word, LogRatio), : object 'coach.ratios' not found
-```
+![plot of chunk unnamed-chunk-7](/plots/unnamed-chunk-7-1.png)
 
 Results here are largely uninteresting, with both coaches employing a smattering of different hockey-centric words and qualifiers. Of the few standout words, we should probably expect Sullivan to refer to his players '[Sid](https://en.wikipedia.org/wiki/Sidney_Crosby)' and '[Geno](https://en.wikipedia.org/wiki/Evgeni_Malkin)' more often than his counterpart, and DeBoer to refer to his opponent as 'Pittsburgh'.
 
@@ -284,24 +264,12 @@ Another way to make the comparision between the coaches is by calculating the *t
 all.coaches.words <- coaches.words %>%
   count(Subject,Word,Label,sort=T) %>%
   ungroup()
-```
 
-```
-## Error in count(., Subject, Word, Label, sort = T): unused arguments (Label, sort = T)
-```
-
-```r
 # Total words per interview
 total.words <- coaches.words %>%
   count(Subject, Label) %>%
   ungroup()
-```
 
-```
-## Error in count(., Subject, Label): object 'Subject' not found
-```
-
-```r
 # Get top words by TF-IDF for each interview
 top.words.tf <- left_join(all.coaches.words,total.words,by=c("Subject","Label")) %>%
   rename(Occurrences=n.x,Total=n.y) %>%
@@ -312,13 +280,7 @@ top.words.tf <- left_join(all.coaches.words,total.words,by=c("Subject","Label"))
   group_by(Document,Label) %>% 
   top_n(1) %>% 
   ungroup()
-```
 
-```
-## Error in left_join(all.coaches.words, total.words, by = c("Subject", "Label")): object 'all.coaches.words' not found
-```
-
-```r
 ggplot(top.words.tf, aes(Word, tf_idf, fill = Subject)) +
   geom_bar(stat = "identity", show.legend = F) +
   facet_wrap(~Subject, ncol = 2, scales = "free_y") +
@@ -328,9 +290,7 @@ ggplot(top.words.tf, aes(Word, tf_idf, fill = Subject)) +
   theme_bw(15)
 ```
 
-```
-## Error in ggplot(top.words.tf, aes(Word, tf_idf, fill = Subject)): object 'top.words.tf' not found
-```
+![plot of chunk unnamed-chunk-8](/plots/unnamed-chunk-8-1.png)
 
 Notice that there are fewer hockey-centric terms here, as these would probably be used in many of the interviews. We find some references to coaches' own players again (including Long Beach Native&trade; [Matt Nieto](https://en.wikipedia.org/wiki/Matt_Nieto)), along with a reminder that I should have removed individual numbers from the text before running the analyses (my bad!). Otherwise, we get a small glimpse into the mindset of each coach, with Sullivan using words like 'commitment', 'expectation', 'adapting', and DeBoer using words like 'composure', 'rythym', and 'control'
 
@@ -349,18 +309,20 @@ nrc <- sentiments %>%
   filter(lexicon == "nrc") %>%
   select(word, sentiment) %>%
   rename(Word = word, Sentiment = sentiment)
-```
 
-```
-## Error in rename(., Word = word, Sentiment = sentiment): unused arguments (Word = word, Sentiment = sentiment)
-```
-
-```r
 head(nrc)
 ```
 
 ```
-## Error in head(nrc): object 'nrc' not found
+## # A tibble: 6 × 2
+##        Word Sentiment
+##       <chr>     <chr>
+## 1    abacus     trust
+## 2   abandon      fear
+## 3   abandon  negative
+## 4   abandon   sadness
+## 5 abandoned     anger
+## 6 abandoned      fear
 ```
 
 We count for each coach the frequency of words falling under each sentiment category and then plot the sentiment over time. This is done my using `inner_join` from the `dplyr` package to merge in the sentiment information from the `nrc` lexicon to the words in the coach text.
@@ -373,26 +335,14 @@ coaches.words.by.interview <- coaches.words %>%
   mutate(TotalWords = n()) %>%
   ungroup() %>%
   distinct(Subject, Label, TotalWords)
-```
 
-```
-## Error in n(): This function should not be called directly
-```
-
-```r
 coaches.word.by.sentiment <- coaches.words %>%
   inner_join(nrc, by = "Word") %>%
   count(Sentiment,Label,Subject) %>% # Count occurrences of each word by each coach in each interview
   rename(Occurrences = n) %>%
   inner_join(coaches.words.by.interview, by = c("Label","Subject")) %>% # Merge total words
   mutate(Frequency = Occurrences/TotalWords)
-```
 
-```
-## Error in is.data.frame(y): object 'nrc' not found
-```
-
-```r
 # Plot the sentiment trajectories over time
 ggplot(data=coaches.word.by.sentiment,aes(x=Label,y=Frequency,color=Subject, group=Subject)) +
   facet_wrap(~Sentiment, nrow=5) +
@@ -404,9 +354,7 @@ ggplot(data=coaches.word.by.sentiment,aes(x=Label,y=Frequency,color=Subject, gro
   theme(axis.text.x = element_text(angle=90))
 ```
 
-```
-## Error in ggplot(data = coaches.word.by.sentiment, aes(x = Label, y = Frequency, : object 'coaches.word.by.sentiment' not found
-```
+![plot of chunk unnamed-chunk-10](/plots/unnamed-chunk-10-1.png)
 
 Notice the high positivity from Pittsburgh's Sullivan in the days following Game 4 (after going up 3 games to 1) and San Jose's DeBoer after Game 5 (a win that staved off elimination). Also check out the spike in trust in the days following the Game 1 loss by the Sharks, which may reflect DeBoer rallying his troops for an important Game 2. We can see spikes in anticipation for Sullivan before (what turned out to be) the decisive Game 6. On the other hand, there is a small spike in anger for DeBoer after losing the Stanley Cup (understandable!).
 
@@ -426,13 +374,7 @@ sentiment.words <- coaches.words %>%
   top_n(10) %>%
   rename(Occurrences = n)  %>%
   arrange(Subject,Sentiment,Word)
-```
 
-```
-## Error in rename(., Sentiment = sentiment): unused argument (Sentiment = sentiment)
-```
-
-```r
 ggplot(data=sentiment.words,aes(x=reorder(factor(Word),Occurrences),y=Occurrences,fill=Subject)) +
   geom_bar(stat="identity",show.legend=F) +
   facet_wrap(~Sentiment + Subject, scales="free_y") +
@@ -442,9 +384,7 @@ ggplot(data=sentiment.words,aes(x=reorder(factor(Word),Occurrences),y=Occurrence
   theme_bw(15)
 ```
 
-```
-## Error in ggplot(data = sentiment.words, aes(x = reorder(factor(Word), : object 'sentiment.words' not found
-```
+![plot of chunk unnamed-chunk-11](/plots/unnamed-chunk-11-1.png)
 
 In general, nothing unexpected here. The most positive word for each coach is 'win'. Here we see how tricky text analysis can be in most cases. For example, 'hard', the most often used negative word by each coach, probably refers to 'playing hard', which in a hockey context, should in fact be considerd as a positive. Also, some hockey specific words have their meaning distorted in this lexicon, such as 'kill', which in this context refers to penalty kills. Finally, 'burns' in this case refers to [Brent Burns](https://en.wikipedia.org/wiki/Brent_Burns), and is almost certainly not a negative; in fact, he was a [Norris finalist](https://www.nhl.com/news/norris-trophy-finalists/c-280515914) that season!
 
@@ -461,13 +401,7 @@ positive.negative <- coaches.words %>%
   spread(Sentiment, n, fill = 0) %>%
   mutate(Positivity = positive - negative) %>%
   select(-positive,-negative)
-```
 
-```
-## Error in rename(., Sentiment = sentiment): unused argument (Sentiment = sentiment)
-```
-
-```r
 ggplot(positive.negative, aes(x=Label, y=Positivity, fill = Subject)) +
   geom_bar(alpha = 0.8, stat = "identity", show.legend = FALSE) +
   facet_wrap(~Subject) +
@@ -477,9 +411,7 @@ ggplot(positive.negative, aes(x=Label, y=Positivity, fill = Subject)) +
   theme(axis.text.x = element_text(angle=90))
 ```
 
-```
-## Error in ggplot(positive.negative, aes(x = Label, y = Positivity, fill = Subject)): object 'positive.negative' not found
-```
+![plot of chunk unnamed-chunk-12](/plots/unnamed-chunk-12-1.png)
 
 We notice the two tallest bars for each coach occur in post-game interviews for games the respective coach won, with the largest bar occurring on the post-game interview after the Penguins Cup win. The only overall negative interviews were by DeBoer, after a particularly devastating Game 2 overtime loss, and the day after a loss putting the Sharks down 3 games to 1.
 
@@ -505,18 +437,31 @@ bigram.counts <- bigrams %>%
   count(Word1,Word2,sort=T) %>%
   rename(Occurrences = n) %>%
   filter(Occurrences >= 5)
-```
 
-```
-## Error in count(., Word1, Word2, sort = T): unused argument (sort = T)
-```
-
-```r
 bigram.counts
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'bigram.counts' not found
+## Source: local data frame [15 x 3]
+## Groups: Word1 [15]
+## 
+##        Word1   Word2 Occurrences
+##        <chr>   <chr>       <int>
+## 1       post  season          21
+## 2        san    jose          14
+## 3   coaching   staff          13
+## 4      power    play          12
+## 5  extremely    hard          10
+## 6       team     win          10
+## 7       zone    time           9
+## 8    scoring chances           8
+## 9        top players           7
+## 10   regular  season           6
+## 11   stanley     cup           6
+## 12  muhammad     ali           5
+## 13     score   goals           5
+## 14      shot   clock           5
+## 15  terrific     job           5
 ```
 
 Again, no real surprises from what someone would expect a hockey coach to be talking about, save for another reminder of Muhammad Ali's passing.
@@ -534,18 +479,27 @@ negated.words <- bigrams %>%
   count(Word1, Word2, sentiment, sort = TRUE) %>%
   ungroup()%>%
   rename(Sentiment = sentiment, Occurrences = n)
-```
 
-```
-## Error in count(., Word1, Word2, sentiment, sort = TRUE): unused arguments (sentiment, sort = TRUE)
-```
-
-```r
 negated.words
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'negated.words' not found
+## # A tibble: 13 × 4
+##    Word1       Word2 Sentiment Occurrences
+##    <chr>       <chr>     <chr>       <int>
+## 1    not      enough  positive           3
+## 2     no       magic  positive           2
+## 3    not        like  positive           2
+## 4     no       burns  negative           1
+## 5     no       issue  negative           1
+## 6    not      afraid  negative           1
+## 7    not   available  positive           1
+## 8    not complaining  negative           1
+## 9    not   concerned  negative           1
+## 10   not        easy  positive           1
+## 11   not       ideal  positive           1
+## 12   not   realistic  positive           1
+## 13   not     worried  negative           1
 ```
 
 That's probably enough for now. I assume the extreme reserve these coaches take with regard to the media is a pretty large limitation for text analysis of their interviews, though at least we were able to see some interesting, if not largely expected results. I have some ideas for applications of these kind of techniques on other kinds of hockey-centric text data (maybe making use of Twitter...), but these will have to wait for another time!
