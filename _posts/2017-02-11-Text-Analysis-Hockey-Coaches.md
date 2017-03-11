@@ -153,7 +153,7 @@ head(coaches.words,n=12)
 ```
 
 ```
-## # A tibble: 12 × 5
+## # A tibble: 12 ? 5
 ##          Date       Subject AfterGame                Label       Word
 ##         <chr>         <chr>     <lgl>                <chr>      <chr>
 ## 1  2016-06-12 Mike Sullivan      TRUE 2016-06-12 Post-Game      learn
@@ -314,7 +314,7 @@ head(nrc)
 ```
 
 ```
-## # A tibble: 6 × 2
+## # A tibble: 6 ? 2
 ##        Word Sentiment
 ##       <chr>     <chr>
 ## 1    abacus     trust
@@ -484,7 +484,7 @@ negated.words
 ```
 
 ```
-## # A tibble: 13 × 4
+## # A tibble: 13 ? 4
 ##    Word1       Word2 Sentiment Occurrences
 ##    <chr>       <chr>     <chr>       <int>
 ## 1    not      enough  positive           3
