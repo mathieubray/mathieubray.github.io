@@ -5,7 +5,7 @@ date: "2017-02-11"
 tags: [R, hockey, text analysis]
 ---
 
-*Full code for this analysis is availabile on [Github](https://github.com/mathieubray/Hockey/tree/master/CoachTranscripts)*
+*Code for this analysis is availabile on [Github](https://github.com/mathieubray/Hockey/tree/master/CoachTranscripts)*
 
 In the [2016 NHL playoffs](https://en.wikipedia.org/wiki/2016_Stanley_Cup_playoffs), the Eastern Conference champion [Pittsburgh Penguins](https://www.nhl.com/penguins), coached by Mike Sullivan, defeated the Western Conference champion [San Jose Sharks](https://www.nhl.com/sharks), coached by Peter DeBoer, in a best of seven series to win the fourth Stanley Cup in their franchise's history. In a series like this, with many ups and downs for both teams, the coach, serving as a spokesman for his team to the media, is under especially high pressure. Can this pressure be gleaned through a text analysis on their words in pre- and post-game interviews? Are there differences between the two coaches in terms of how they relay their mindset to the public? In my eternal attempt to shoehorn hockey concepts into data science problems, I will spend some time here showing how to apply some basic text analysis techniques to a set of NHL coach pre- and post-game press interviews scraped from the web.
 
@@ -30,8 +30,7 @@ library(wordcloud) # Word clouds
 ```
 
 ```{r, echo=F}
-transcript <- read.csv("../data/2015-2016_Stanley_Cup_Final_Transcripts.csv",header=T,stringsAsFactors=F)
-cup.final <- read.csv("../data/2015-2016_Stanley_Cup_Final_Scores.csv",header=T,stringsAsFactors=F)
+transcript <- read.csv("../data/2015-2016_SCFinal_Transcripts.csv",header=T,stringsAsFactors=F)
 
 ```
 

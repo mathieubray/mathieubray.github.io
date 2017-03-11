@@ -5,8 +5,9 @@ date: "2016-12-23"
 tags: [R, hockey]
 layout: post
 ---
-*This post was updated on 2017-02-07*
+*This post was updated on 2017-03-11*
 
+*Code for this analysis is availabile on [Github](https://github.com/mathieubray/Hockey/tree/master/QuebecPlayers)*
 
 I plan on using this space to post my musings on statistics that, shall we say, fall outside of the hallowed halls of academia. For the most part, this will mean lots of R, and lots of hockey and Twitter data. I hope to share something interesting every few weeks, though with my ultra hectic (wink) grad student life, we'll see how long I can keep that promise...
 
@@ -34,8 +35,6 @@ For the roster, we require only the first and last name of the player, along wit
 
 
 ```r
-load("data/nhlscrapr20142015.RData")
-
 # Get player names and identifying codes 
 roster <- nhlscrapr.20142015.roster %>% 
   select(firstlast,index) %>%
@@ -56,20 +55,21 @@ goals <- nhlscrapr.20142015.pbp %>%
   filter(Opponent == "MTL") %>% # Consider only goals against Montreal
   ungroup() %>%
   arrange(Date)
+```
 
+
+```r
 head(goals)
 ```
 
 ```
-## # A tibble: 6 ? 5
-##    Team       Date           Player Opponent InMTL
-##   <chr>     <dttm>            <chr>    <chr> <lgl>
-## 1   TOR 2014-10-08      NAZEM KADRI      MTL FALSE
-## 2   TOR 2014-10-08      TYLER BOZAK      MTL FALSE
-## 3   TOR 2014-10-08    MORGAN RIELLY      MTL FALSE
-## 4   WSH 2014-10-09 ANDRE BURAKOVSKY      MTL FALSE
-## 5   PHI 2014-10-11    MICHAEL RAFFL      MTL FALSE
-## 6   PHI 2014-10-11   WAYNE SIMMONDS      MTL FALSE
+##   Team       Date           Player Opponent InMTL
+## 1  TOR 2014-10-08      NAZEM KADRI      MTL FALSE
+## 2  TOR 2014-10-08      TYLER BOZAK      MTL FALSE
+## 3  TOR 2014-10-08    MORGAN RIELLY      MTL FALSE
+## 4  WSH 2014-10-09 ANDRE BURAKOVSKY      MTL FALSE
+## 5  PHI 2014-10-11    MICHAEL RAFFL      MTL FALSE
+## 6  PHI 2014-10-11   WAYNE SIMMONDS      MTL FALSE
 ```
 
 Some of you may have noticed I use capital letters for my column names. Hopefully my blatant disregard for standard convention doesn't offend anyone too much (or my frequent use of ellipses for that matter...)
@@ -127,19 +127,17 @@ quebec.against.mtl
 ```
 
 ```
-## # A tibble: 10 ? 5
-##     Team       Date              Player InMTL  Birthplace
-##    <chr>     <dttm>               <chr> <lgl>       <chr>
-## 1    BOS 2014-10-16         SIMON GAGNE  TRUE    Ste. Foy
-## 2    COL 2014-10-18        ALEX TANGUAY  TRUE Ste-Justine
-## 3    MIN 2014-11-08    JASON POMINVILLE  TRUE  Repentigny
-## 4    NYR 2014-11-23    MARTIN ST. LOUIS FALSE       Laval
-## 5    COL 2014-12-01       DANIEL BRIERE FALSE    Gatineau
-## 6    MIN 2014-12-03    JASON POMINVILLE FALSE  Repentigny
-## 7    PIT 2015-01-03        DAVID PERRON FALSE  Sherbrooke
-## 8    NSH 2015-01-20        MIKE RIBEIRO  TRUE    Montreal
-## 9    ANA 2015-03-04 FRANCOIS BEAUCHEMIN FALSE       Sorel
-## 10   T.B 2015-03-30     JONATHAN DROUIN  TRUE  Ste-Agathe
+##    Team       Date              Player InMTL  Birthplace
+## 1   BOS 2014-10-16         SIMON GAGNE  TRUE    Ste. Foy
+## 2   COL 2014-10-18        ALEX TANGUAY  TRUE Ste-Justine
+## 3   MIN 2014-11-08    JASON POMINVILLE  TRUE  Repentigny
+## 4   NYR 2014-11-23    MARTIN ST. LOUIS FALSE       Laval
+## 5   COL 2014-12-01       DANIEL BRIERE FALSE    Gatineau
+## 6   MIN 2014-12-03    JASON POMINVILLE FALSE  Repentigny
+## 7   PIT 2015-01-03        DAVID PERRON FALSE  Sherbrooke
+## 8   NSH 2015-01-20        MIKE RIBEIRO  TRUE    Montreal
+## 9   ANA 2015-03-04 FRANCOIS BEAUCHEMIN FALSE       Sorel
+## 10  T.B 2015-03-30     JONATHAN DROUIN  TRUE  Ste-Agathe
 ```
 
 This was all pretty easy. The final tally appears to be 10 goals by Quebecers, with 5 occurring in Montreal. This seems... well, quite low! I'll note that this doesn't take into account francophone players not born in the province of Quebec ([Claude Giroux](https://www.nhl.com/player/claude-giroux-8473512), for example, is from Ontario). 

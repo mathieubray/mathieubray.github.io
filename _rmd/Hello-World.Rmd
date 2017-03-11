@@ -5,6 +5,8 @@ date: "2016-12-23"
 tags: [R, hockey]
 ---
 
+*Code for this analysis is availabile on [Github](https://github.com/mathieubray/Hockey/tree/master/QuebecPlayers)*
+
 I plan on using this space to post my musings on statistics that, shall we say, fall outside of the hallowed halls of academia. For the most part, this will mean lots of R, and lots of hockey and Twitter data. I hope to share something interesting every few weeks, though with my ultra hectic (wink) grad student life, we'll see how long I can keep that promise...
 
 For now here's a few snippets of code to show I can make my way around R. 
@@ -28,10 +30,7 @@ The loaded data is split across three individual datasets. We will make use of `
 
 For the roster, we require only the first and last name of the player, along with his identifying code in the play-by-play data. For the play-by-play, we first filter out all non-goal events and all shootout goals (which is marked as occurring in period 5). We then merge in the player name based on the identifying code. The game date is obtained as the number of days elapsed since January 1, 2002. We also extract the team that was scored on, and, because it might be interesting, whether or not the game occurred in Montreal. Finally, we retain only the goals where Montreal ("MTL") is specified as the opposing team.
 
-```{r}
-
-load("../data/nhlscrapr20142015.RData")
-
+```{r, eval=F}
 # Get player names and identifying codes 
 roster <- nhlscrapr.20142015.roster %>% 
   select(firstlast,index) %>%
@@ -53,8 +52,13 @@ goals <- nhlscrapr.20142015.pbp %>%
   ungroup() %>%
   arrange(Date)
 
-head(goals)
+```
+```{r, echo=F}
+goals <- read.csv("../data/NHL_Goals_2014-2015.csv",header=T,stringsAsFactors=F)
 
+```
+```{r}
+head(goals)
 ```
 
 Some of you may have noticed I use capital letters for my column names. Hopefully my blatant disregard for standard convention doesn't offend anyone too much (or my frequent use of ellipses for that matter...)
