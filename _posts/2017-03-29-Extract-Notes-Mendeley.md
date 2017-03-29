@@ -17,7 +17,7 @@ As always, let's start by loading some handy libraries.
 
 
 ```r
-library(RSQLite) # Database
+library(RSQLite) # Database 
 library(dplyr) # This really should be loaded by default always...
 library(tidyr) # 'spread' function to change table from 'long' to 'wide' format 
 ```
@@ -48,7 +48,7 @@ head(dbListTables(mendeley.connection),n=10)
 ## [10] "DocumentKeywords"
 ```
 
-For each table, to get an idea of the contents, the list of variable names can be printed using the `dbListFields` function, illustrated here for the `Documents` table. 
+For each table, to get an idea of the contents, the list of variable names can be printed using the `dbListFields` function, illustrated here for the "Documents" table. 
 
 
 ```r
@@ -94,7 +94,7 @@ dbListFields(mendeley.connection,"Documents")
 ## [69] "volume"                   "year"
 ```
 
-We will create the `extract.table` function below to effectively combine the actions of sending a database query (`dbSendQuery`), fetching the results (`dbFetch`), and freeing up the resources (`dbClearResult`). 
+I use the `extract.table` function defined below to effectively combine the actions of sending a database query (`dbSendQuery`), fetching the results (`dbFetch`), and freeing up the resources (`dbClearResult`). 
 
 
 
@@ -112,7 +112,7 @@ extract.table <- function(con,query){
 }
 ```
 
-In Mendeley, saved documents can be sorted into one or more user-defined folders. In my particular case, I was focusing on a set of recent papers I have been reading on the topic of [multilayer and dynamic network analysis](https://en.wikipedia.org/wiki/Multidimensional_network), which I had sorted into a folder appropriately named "Networks". Based on the collection of tables shown earlier, it seems the `Folders` and `DocumentFolders` tables might come in handy. Note that I will use a mix of SQL commands and `dplyr` functions to get my desired results going forward.
+In Mendeley, saved documents can be sorted into one or more user-defined folders. In my particular case, I was focusing on a set of recent papers I have been reading on the topic of [multilayer and dynamic network analysis](https://en.wikipedia.org/wiki/Multidimensional_network), which I had sorted into a folder appropriately named "Networks". Based on the collection of tables shown earlier, it seems the "Folders" and "DocumentFolders" tables might come in handy. Note that I will use a mix of SQL commands and `dplyr` functions to get my desired results going forward.
 
 
 ```r
@@ -140,7 +140,7 @@ dbListFields(mendeley.connection,"DocumentFolders")
 document.folders <- extract.table(mendeley.connection, "SELECT folderId, documentId FROM DocumentFolders")
 ```
 
-We first need to retrieve the internal ID assigned to the `"Networks"` folder, then extract the IDs associated with all documents in that folder. 
+We first need to retrieve the internal ID assigned to the "Networks" folder, then extract the IDs associated with all documents in that folder. 
 
 
 ```r
@@ -162,13 +162,13 @@ head(relevant.papers)
 ```
 
 
-The `Documents` table contains the document title, among others (for illustration, I also collect the citation key assigned to each document). Here we simply need to extract the table, filtering to include only those documents of interest. 
+The "Documents"" table contains the document title, among others (for illustration, I also collect the citation key assigned to each document). Here we simply need to extract the table, filtering to include only those documents of interest. 
 
 
 
 ```r
 # Collect title and citation key for all relevant documents
-relevant.documents <- extract.table(mendeley.connection,"SELECT id, title, citationKey FROM Documents") %>% 
+relevant.documents <- extract.table(mendeley.connection,"SELECT id, citationKey, title FROM Documents") %>% 
   filter(id %in% relevant.papers) %>%
   rename(documentId = id)
 ```
@@ -184,7 +184,7 @@ relevant.documents <- extract.table(mendeley.connection,"SELECT id, title, citat
 ## 6        264    Oselio2014 Multi-Layer Graph Analysis for Dynamic S...
 ```
 
-Each document can have multiple authors, which are stored in the `DocumentContributors` table. Let's take a quick peak at the raw table.
+Each document can have multiple authors, which are stored in the "DocumentContributors" table. Let's take a quick peak at the raw table.
 
 
 ```r
@@ -221,7 +221,7 @@ unique(authors$contribution)
 ## [1] "DocumentAuthor" "DocumentEditor"
 ```
 
-The contribution field specifies whether the entry refers to an author or an editor. We reduce the table to our documents of interest and filter out the editors. To concatenate all of the authors into one string, we first concatenate the `lastName` and `firstName` using the `paste` function, then group by document and collapse each of the authors into one string, separated by a semi-colon (;), again using the `paste` funtion with the `collapse` option set to true.
+The contribution field specifies whether the entry refers to an author or an editor. We reduce the table to our documents of interest and filter out the editors. To concatenate all of the authors into one string, we first concatenate the `lastName` and `firstName` using the `paste` function, then group by document and collapse each of the authors into one string, separated by a semi-colon (;), again using the `paste` funtion with the `collapse` option set.
 
 
 ```r
@@ -264,7 +264,7 @@ relevant.authors <- relevant.authors %>%
 ## 6        264 Oselio, Brandon; Kulesza, Alex; Hero, Al...
 ```
 
-The tags associated with each document can be extracted and concatenated in a similar manner to the authors. Tags are located in the `DocumentTags` table.
+The tags associated with each document can be extracted and concatenated in a similar manner to the authors. Tags are located in the "DocumentTags" table.
 
 
 ```r
@@ -333,7 +333,7 @@ relevant.notes <- extract.table(mendeley.connection,"SELECT documentId, note FRO
 ## 6        249  Generate random multilayer partitions w...   key
 ```
 
-Finally, to tidy the data such that each document is on its own row, I use the `spread` function in `tidyr`, which creates am individual variable for each `type`, whose entry for each document contains the relevant note.
+Finally, to tidy the data such that each document is on its own row, I use the `spread` function in `tidyr`, which creates an individual variable for each `type`, whose entry for each document contains the relevant note.
 
 
 ```r
@@ -343,16 +343,20 @@ relevant.notes <- relevant.notes %>%
 
 
 ```
-## # A tibble: 6 ? 3
 ##   documentId                              goal
-##        <int>                             <chr>
 ## 1        213  Study the link prediction pro...
 ## 2        215  Overview of computational met...
 ## 3        224  Community detection in multil...
 ## 4        232  Flexible model fo dynamic mul...
 ## 5        249  Community detection in multil...
 ## 6        264  Estimate the true adjacency m...
-## # ... with 1 more variables: key <chr>
+##                                 key
+## 1  Previously, rolling 1-step fo...
+## 2                             NA...
+## 3  Newman-Girvan modularity or e...
+## 4  Characterize edges as conditi...
+## 5  Generate random multilayer pa...
+## 6  Latent variable model which d...
 ```
 
 At this point, We have collected all of our desired information, and it's a simple matter of joining all the tables together, using `documentId` as the primary key.
@@ -368,13 +372,13 @@ relevant.files <- relevant.documents %>%
 
 
 ```
-##   documentId                             title   citationKey
-## 1        213 Evaluating Link Prediction Acc... Junuthula2016
-## 2        215 Computational methods for dyna...    Cortes2003
-## 3        224 Null models and modularity bas...      Paul2016
-## 4        232 Bayesian Learning of Dynamic M...   Durante2016
-## 5        249 Generative Benchmark Models fo...         Bazzi
-## 6        264 Multi-Layer Graph Analysis for...    Oselio2014
+##   documentId   citationKey                             title
+## 1        213 Junuthula2016 Evaluating Link Prediction Acc...
+## 2        215    Cortes2003 Computational methods for dyna...
+## 3        224      Paul2016 Null models and modularity bas...
+## 4        232   Durante2016 Bayesian Learning of Dynamic M...
+## 5        249         Bazzi Generative Benchmark Models fo...
+## 6        264    Oselio2014 Multi-Layer Graph Analysis for...
 ##                        authorsNames                           tagList
 ## 1 Junuthula, Ruthwik R.; Xu, Kev... dynamic network; edge addition...
 ## 2 Cortes, Corinna; Pregibon, Dar... dynamic network; edge addition...
@@ -393,4 +397,4 @@ relevant.files <- relevant.documents %>%
 
 The final data frame is ready for any kind of fancy analysis, or can be exported to CSV format (or whatever format you prefer).
 
-That's basically it for now, but check back soon! I do plan on having some more interesting articles coming up shortly...
+That's basically it for now, but check back soon! I do plan on having some more interesting posts coming up shortly...
