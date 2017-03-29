@@ -1,0 +1,264 @@
+---
+title: "Extract Mendeley Notes Using R"
+author: "Mathieu Bray"
+date: "2017-03-29"
+tags: [R, SQL]
+---
+
+*Code for this analysis is availabile on [Github](https://gist.github.com/mathieubray/c7073f542f54b52d93247544521ad4a2)*
+
+Thought I would offer up a quick post on something that had sidetracked me earlier this week, namely how to extract notes and annotations in [Mendeley](https://www.mendeley.com/) using R. Basically I was having a similar problem as Daniel Hynk [here](http://danielhnyk.cz/export-pdf-annotations-mendeley-csv-or-txt/), which he solved using Python. I too use Mendeley as a reference manager, which also has the handy feature of allowing users to add their own annotations and notes to their saved documents. While I have been generally satisfied with Mendeley, I was in a situation where I wanted to put together a table containing some information on a set of papers I had been reading, including, in particular, the notes I had been adding. Unfortunately, Mendeley does not offer a simple option for doing this (some information is available for export to .bib or .xml).
+
+Anyway, Mendeley stores all the information about a user's account locally in an SQLite database. We can connect to this database and extract the information, including the notes. I'm not sure how much this tutorial will generalize to other reference management software suites, but I imagine the underlying mechanics are similar. This tutorial can also be treated as an introduction to database interaction using the `RSQLite` package, available from [CRAN](https://cran.r-project.org/web/packages/RSQLite/RSQLite.pdf).
+
+As always, let's start by loading some handy libraries.
+
+```{r,warning=F,message=F}
+library(RSQLite) # Database
+library(dplyr) # This really should be loaded by default always...
+library(tidyr) # 'spread' function to change table from 'long' to 'wide' format 
+
+```
+
+We first need to connect to the database. [Mendeley Support](http://support.mendeley.com/customer/en/portal/articles/227951-how-do-i-locate-mendeley-desktop-database-files-on-my-computer-) lists how to find the local database path for each system. In Windows, the `mendeley.path`, as we will refer to it in R, will look something like `C:/Users/{username}/AppData/Local/Mendeley Ltd./Mendeley Desktop/{youremail}@{emailclient.com}@www.mendeley.com.sqlite`.
+
+
+```{r,echo=F}
+mendeley.path = "C:/Users/braym/AppData/Local/Mendeley Ltd./Mendeley Desktop/braymath@umich.edu@www.mendeley.com.sqlite"
+
+```
+
+```{r}
+# Connect to the database
+mendeley.connection = dbConnect(RSQLite::SQLite(),mendeley.path)
+
+```
+
+The Mendeley database contains a variety of tables. These can be listed by using the `dbListTables` funtion
+
+```{r}
+# Some of the tables available in the Mendeley database
+head(dbListTables(mendeley.connection),n=10)
+
+```
+
+For each table, to get an idea of the contents, the list of variable names can be printed using the `dbListFields` function, illustrated here for the `Documents` table. 
+
+```{r}
+# The variables available in the 'Documents' table
+dbListFields(mendeley.connection,"Documents")
+
+```
+
+We will create the `extract.table` function below to effectively combine the actions of sending a database query (`dbSendQuery`), fetching the results (`dbFetch`), and freeing up the resources (`dbClearResult`). 
+
+
+```{r}
+
+extract.table <- function(con,query){
+  
+  res <- dbSendQuery(con,query) # Send query
+  
+  table <- dbFetch(res) # Fetch table
+  
+  dbClearResult(res) # Free resources
+  
+  return(table)
+  
+}
+
+```
+
+In Mendeley, saved documents can be sorted into one or more user-defined folders. In my particular case, I was focusing on a set of recent papers I have been reading on the topic of [multilayer and dynamic network analysis](https://en.wikipedia.org/wiki/Multidimensional_network), which I had sorted into a folder appropriately named "Networks". Based on the collection of tables shown earlier, it seems the `Folders` and `DocumentFolders` tables might come in handy. Note that I will use a mix of SQL commands and `dplyr` functions to get my desired results going forward.
+
+```{r}
+dbListFields(mendeley.connection,"Folders")
+
+folders <- extract.table(mendeley.connection, "SELECT id, name FROM Folders")
+
+dbListFields(mendeley.connection,"DocumentFolders")
+
+document.folders <- extract.table(mendeley.connection, "SELECT folderId, documentId FROM DocumentFolders")
+
+```
+
+We first need to retrieve the internal ID assigned to the `"Networks"` folder, then extract the IDs associated with all documents in that folder. 
+
+```{r}
+
+relevant.folder.name <- "Networks"
+
+# Extract interal ID for folder of interest
+relevant.folder.id <- (folders %>%
+  filter(name == relevant.folder.name))$id[1]
+
+# Extract internal IDs for all papers belonging to the folder of interest, using the folder ID
+relevant.papers <- (document.folders %>%
+  filter(folderId == relevant.folder.id))$documentId
+
+head(relevant.papers)
+
+```
+
+
+The `Documents` table contains the document title, among others (for illustration, I also collect the citation key assigned to each document). Here we simply need to extract the table, filtering to include only those documents of interest. 
+
+
+```{r}
+
+# Collect title and citation key for all relevant documents
+relevant.documents <- extract.table(mendeley.connection,"SELECT id, title, citationKey FROM Documents") %>% 
+  filter(id %in% relevant.papers) %>%
+  rename(documentId = id)
+```
+
+```{r,echo=F}
+relevant.documents.view <- relevant.documents %>%
+  select(documentId,citationKey,title) %>%
+  mutate(title = paste0(substr(title,1,40),"..."))
+
+head(relevant.documents.view)
+
+```
+
+Each document can have multiple authors, which are stored in the `DocumentContributors` table. Let's take a quick peak at the raw table.
+
+```{r}
+
+dbListFields(mendeley.connection,"DocumentContributors")
+
+# Collect and concatenate authors for all relevant documents
+authors <- extract.table(mendeley.connection,"SELECT * FROM DocumentContributors")
+
+head(authors)
+
+unique(authors$contribution)
+
+```
+
+The contribution field specifies whether the entry refers to an author or an editor. We reduce the table to our documents of interest and filter out the editors. To concatenate all of the authors into one string, we first concatenate the `lastName` and `firstName` using the `paste` function, then group by document and collapse each of the authors into one string, separated by a semi-colon (;), again using the `paste` funtion with the `collapse` option set to true.
+
+```{r}
+# Collect and concatenate authors for all relevant documents
+relevant.authors <- authors %>%
+  filter(contribution == "DocumentAuthor",
+         documentId %in% relevant.papers) %>%
+  mutate(fullName = paste(lastName,firstNames,sep=", ")) %>% # Concatenate first and last name
+  select(documentId,fullName)
+
+```
+
+```{r,echo=F}
+head(relevant.authors)
+
+```
+
+```{r}
+relevant.authors <- relevant.authors %>%
+  group_by(documentId) %>%
+  summarize(authorsNames = paste(fullName,collapse="; ")) # Concatenate all authors of a document together
+ 
+
+```
+
+```{r,echo=F}
+relevant.authors.view <- relevant.authors %>%
+  mutate(authorsNames = paste0(substr(authorsNames,1,40),"..."))
+
+head(relevant.authors.view)
+
+```
+
+The tags associated with each document can be extracted and concatenated in a similar manner to the authors. Tags are located in the `DocumentTags` table.
+
+```{r}
+dbListFields(mendeley.connection,"DocumentTags")
+
+# Collect and concatenate tags for all relevant documents
+relevant.tags <- extract.table(mendeley.connection, "SELECT * FROM DocumentTags") %>%
+  filter(documentId %in% relevant.papers) %>%
+  group_by(documentId) %>%
+  summarize(tagList = paste(tag,collapse="; "))
+
+```
+
+```{r, echo=F}
+
+relevant.tags.view <- relevant.tags %>%
+   mutate(tagList = paste0(substr(tagList,1,40),"..."))
+
+head(relevant.tags.view)
+
+```
+
+Finally, we collect the document notes, located in the `FileNotes` table. In general, these would be stored similarly to tags, with one note per row and document ID specified, and can therefore be treated in the same manner as the tags to obtain a single string for each document. In my case, I had been annotating each paper in this folder with two notes, one for the main goal of each paper, introduced by "Goal:", and one for the key insights or techniques used in the article, introduced by "Key:". I classified each note into a `type` based on whether it represented a "Goal" or "Key" by splitting the note string by colon (:) and inspecting the first token.
+
+```{r}
+
+dbListFields(mendeley.connection,"FileNotes")
+
+# Collect notes
+relevant.notes <- extract.table(mendeley.connection,"SELECT documentId, note FROM FileNotes") %>%
+  filter(documentId %in% relevant.papers) %>%
+  rowwise() %>%
+  mutate(type = tolower(trimws(unlist(strsplit(note,split=":")))[1]), # Extract for each document whether it is a 'Goal' or a 'Key'
+         note = paste(unlist(strsplit(note,split=":"))[-1])) %>% # Extract the actual note
+  ungroup() 
+
+```
+
+```{r,echo=F}
+relevant.notes.view <- relevant.notes %>%
+  mutate(note = paste0(substr(note,1,40),"..."))
+
+head(relevant.notes.view)
+
+```
+
+Finally, to tidy the data such that each document is on its own row, I use the `spread` function in `tidyr`, which creates am individual variable for each `type`, whose entry for each document contains the relevant note.
+
+```{r}
+
+relevant.notes <- relevant.notes %>%
+  spread(type,note)
+
+```
+
+```{r,echo=F}
+
+relevant.notes.view <- relevant.notes %>%
+  mutate(goal = paste0(substr(goal,1,30),"..."),
+         key = paste0(substr(key,1,30),"..."))
+
+
+head(relevant.notes.view)
+
+```
+
+At this point, We have collected all of our desired information, and it's a simple matter of joining all the tables together, using `documentId` as the primary key.
+
+```{r}
+# Join the datasets together
+relevant.files <- relevant.documents %>%
+  left_join(relevant.authors, by="documentId") %>%
+  left_join(relevant.tags, by="documentId") %>%
+  left_join(relevant.notes, by="documentId")
+
+```
+
+```{r,echo=F}
+
+relevant.files.view <- relevant.files %>%
+  mutate(title = paste0(substr(title,1,30),"..."),
+         authorsNames = paste0(substr(authorsNames,1,30),"..."),
+         tagList = paste0(substr(tagList,1,30),"..."),
+         goal = paste0(substr(goal,1,30),"..."),
+         key = paste0(substr(key,1,30),"..."))
+
+head(relevant.files.view)
+
+```
+
+The final data frame is ready for any kind of fancy analysis, or can be exported to CSV format (or whatever format you prefer).
+
+That's basically it for now, but check back soon! I do plan on having some more interesting articles coming up shortly...
