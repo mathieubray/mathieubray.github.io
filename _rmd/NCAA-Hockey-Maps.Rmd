@@ -6,10 +6,11 @@ tags: [R, hockey, ggmap, ggiraph, ggimage, leaflet]
 
 ---
 
-
-![](/Users/braym/Desktop/Personal Files/Website/mathieubray.github.io/plots/map-screenshot.jpg)
+*Code for the maps can be found on [Github](https://github.com/mathieubray/Hockey/tree/master/NCAA/Projects/Maps)*
 
 **Note that maps on this page are static. To interact with the maps, visit the [Shiny app](https://mathieubray-personal.shinyapps.io/NCAAPlayersHometown/)**
+
+![](/Users/braym/Desktop/Personal Files/Website/mathieubray.github.io/plots/map-screenshot.jpg)
 
 Been looking at some NCAA hockey data lately. Have a few ideas kicking around, none of which are really beyond the idea stage at this point... In the meantime, since I haven't posted anything in a while, I figured I could at least put up something fun. So here are some maps of the men's NCAA hockey players' hometowns, which I made using a bunch of packages in R, namely `ggmap`, `ggimage`, `ggiraph` and `leaflet`.
 
