@@ -240,19 +240,19 @@ So which exchanges should we pursue? It's kind of difficult to decide just looki
 
 Again, we're looking for the set of disjoint cycles that maximizes the number of transplants among the selected exchanges. The `ompr` package comes in handy here. It uses a very simple syntax in order to build a solver for mixed integer problems, like the KPD problem, on top of the R Optimization Interface (`ROI`). The main idea is to abstract our problem, initialized using `MIPModel`, with variables (`add_variable`), establish an objective (`set_objective`), add constraints (`add_constraint`), and then solve (`solve_model`). We use the free `glpk` solver here, which is passed as an argument to the `solve_model` function. The solution can then be extracted into a data frame using `get_solution`. 
 
-We describe here the problem in such a way that we can solve it using `ompr` (this is a slightly different formulation than is common in the [literature](https://link.springer.com/article/10.1007%2Fs12561-013-9082-0)). Let C be the number of cycles and N be the number of nodes. Let U_i represent here the *utility* of the cycle. In our case, this is simply the number of transplants the cycle admits. In general, a cycle can be assigned any value of U_i, reflecting certain clinical factors for example, and maximization will be effectively in terms of that utility.
+We describe here the problem in such a way that we can solve it using `ompr` (this is a slightly different formulation than is common in the [literature](https://link.springer.com/article/10.1007%2Fs12561-013-9082-0)). Let $$C$$ be the number of cycles and $$N$$ be the number of nodes. Let $$U_i$$ represent here the *utility* of the cycle. In our case, this is simply the number of transplants the cycle admits. In general, a cycle can be assigned any value of $$U_i$$, reflecting certain clinical factors for example, and maximization will be effectively in terms of that utility.
 
-Let Y_i \in \{0,1\} designate whether cycle i should be pursued (1) or not (0). Similarly, let X_{ij} \in \{0,1\} correspond to the status of node j with respect to cycle i. Obviously, the status of node j is tied to the statuses of the cycles that contain it. In other words, if cycle i is chosen (i.e. Y_i = 1), and node j is part of cycle i, node j is therefore chosen (i.e. X_{ij} = 1). So node j is part of cycle i \Rightarrow X_{ij} = Y_i, i \in \{1,...,C\}, j \in \{1,...,N\}. Obviously, a node can only appear in the solution once. So for each node j, we want that \sum_{i}X_{ij} \leq 1.
+Let $$Y_i \in \{0,1\}$$ designate whether cycle $$i$$ should be pursued (1) or not (0). Similarly, let $$X_{ij} \in \{0,1\}$$ correspond to the status of node $$j$$ with respect to cycle $$i$$. Obviously, the status of node $$j$$ is tied to the statuses of the cycles that contain it. In other words, if cycle $$i$$ is chosen (i.e. $$Y_i = 1$$), and node $$j$$ is part of cycle $$i$$, node $$j$$ is therefore chosen (i.e. $$X_{ij} = 1$$). So node $$j$$ is part of cycle $$i \Rightarrow X_{ij} = Y_i$$, $$i \in \{1,...,C\}, j \in \{1,...,N\}$$. Obviously, a node can only appear in the solution once. So for each node $$j$$, we want that $$\sum_{i}X_{ij} \leq 1$$.
 
 The optimization problem is thus summarized as follows:
 
-\max_{\{Y_i\}} \sum_i Y_iU_i 
+$$\max_{\{Y_i\}} \sum_i Y_iU_i$$ 
 
-st. \sum_{i}X_{ij} \leq 1, j \in \{1,...,N\}
+$$st. \sum_{i}X_{ij} \leq 1, j \in \{1,...,N\}$$
 
-\ \ \ \ \ X_{ij} = Y_iI(\mbox{Node } j \mbox{ is part of Cycle } i), i \in \{1,...,C\}, j \in \{1,...,N\}
+$$\ \ \ \ \ X_{ij} = Y_iI(\mbox{Node } j \mbox{ is part of Cycle } i), i \in \{1,...,C\}, j \in \{1,...,N\}$$
 
-The solution is obtained below. Note that the `sum_expr` function signals the solver to sum over a set of variables. The `cycle_contains_node` function below uses `purrr::map2_lgl` in order to determine whether a node is part of a certain cycle. As such, our second constraint only applies to (i,j) combinations where node j appears in cycle i.
+The solution is obtained below. Note that the `sum_expr` function signals the solver to sum over a set of variables. The `cycle_contains_node` function below uses `purrr::map2_lgl` in order to determine whether a node is part of a certain cycle. As such, our second constraint only applies to $$(i,j)$$ combinations where node $$j$$ appears in cycle $$i$$.
 
 
 ```r
