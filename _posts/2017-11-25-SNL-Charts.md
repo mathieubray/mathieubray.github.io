@@ -22,6 +22,8 @@ I'll also make clear right at the onset that this post is meant mostly as a fun 
 All that being said, let's get right into it, starting by loading our handy libraries.
 
 
+
+
 ```r
 library(dplyr)     # Lifeblood of data science
 library(rvest)     # Scrape scrape scrape
@@ -53,12 +55,6 @@ raw.ratings <- url %>%
   data.frame(stringsAsFactors=F) # Convert to data frame
 ```
 
-
-
-
-```r
-head(raw.ratings)
-```
 
 ```
 ##    X1                                       X2         X3        X4
@@ -108,12 +104,6 @@ snl.ratings <- raw.ratings %>%
 ```
 
 
-
-
-```r
-head(snl.ratings)
-```
-
 ```
 ##   Season                                   Guests Rating Votes
 ## 1      1    George Carlin/Billy Preston/Janis Ian    7.6   266
@@ -150,12 +140,6 @@ raw.snl.3 <- extract.wiki.table("https://en.wikipedia.org/wiki/List_of_Saturday_
 raw.snl.combined <- rbind(raw.snl.1,raw.snl.2,raw.snl.3) # Bind the three data frames together
 ```
 
-
-
-
-```r
-head(raw.snl.combined)
-```
 
 ```
 ##   X           X1             X2             X3
@@ -225,12 +209,6 @@ first.episodes <- snl.airdates %>%
 ```
 
 
-
-
-```r
-head(first.episodes)
-```
-
 ```
 ##   EpNumber Season
 ## 1        1      1
@@ -250,15 +228,6 @@ snl.airdates <- snl.airdates %>%
   filter(Season < 43) # Not going to consider the season currently airing
 ```
 
-
-```r
-snl.airdates <- read.csv("data/SNLAirdates.csv",header=T,stringsAsFactors=F) 
-```
-
-
-```r
-head(snl.airdates)
-```
 
 ```
 ##   Season SeasonEpNumber           Host
@@ -525,7 +494,7 @@ ggplot(data=snl.data, aes(x=Rating, y=as.factor(Season), fill=MedianRating)) +
   geom_density_ridges(alpha=0.7, rel_min_height=0.01) +
   scale_fill_viridis(name = "Median Rating") +
   scale_y_discrete(position="right") +
-  theme_bw() +
+  theme_bw(16) +
   xlim(0,10) +
   xlab("Rating") +
   ylab("Season") +
@@ -567,7 +536,7 @@ ggplot(data=snl.data, aes(x=as.factor(Season), y=Votes, color = MeanVotes)) +
   scale_color_viridis(name = "Mean Number of Votes", direction=-1) +
   geom_boxplot(size=0.75) +
   xlab("Season") +
-  theme_bw() +
+  theme_bw(16) +
   coord_flip() +
   annotate("text",x=21,y=250,col="red",label=paste0("@mathieubray ",lubridate::year(lubridate::today())),
            alpha=0.15,cex=12,fontface="bold",angle=30) +
@@ -583,7 +552,7 @@ The overall distribution of ratings is shown below, as both a histogram (recall 
 ```r
 ggplot(data=snl.data, aes(Rating)) +
   geom_histogram(stat="count",alpha=0.8,fill="blue") +
-  theme_bw() +
+  theme_bw(16) +
   xlim(0,10) +
   ylim(0,50) +
   xlab("Rating") +
@@ -600,7 +569,7 @@ ggplot(data=snl.data, aes(Rating)) +
 ```r
 ggplot(data=snl.data, aes(x=Rating)) +
   geom_density(alpha=0.5, fill="blue") +
-  theme_bw() +
+  theme_bw(16) +
   xlim(0,10) +
   xlab("Rating") +
   ylab("Density") +
@@ -721,7 +690,7 @@ ggplot(data=snl.data.enhanced, aes(x=Rating, fill=WeeksCat)) +
   geom_density(alpha = 0.5) +
   facet_wrap(~WeeksCat) +
   scale_fill_viridis(name="Weeks Since Last Episode",discrete=T) +
-  theme_bw() +
+  theme_bw(16) +
   xlim(0,10) +
   ylim(0,0.62) +
   xlab("Rating") +
@@ -766,15 +735,15 @@ snl.data.enhanced %>%
 ggplot(data=snl.data.enhanced, aes(x=Rating, fill=FreshEpisode)) +
   geom_density(alpha=0.5) +
   scale_fill_viridis(discrete=T, name = "", labels=c("No Break","Break")) +
-  theme_bw() +
+  theme_bw(16) +
   xlim(0,10) +
   ylim(0,0.5) +
   xlab("Rating") +
   ylab("Density") +
   annotate("text",x=5,y=0.25,col="red",label=paste0("@mathieubray ",lubridate::year(lubridate::today())),
            alpha=0.15,cex=15,fontface="bold",angle=30) +
-  ggtitle("Are Ratings Affected by Whether an Episode is a Season Premiere?",
-          subtitle="Color represents whether episodes are the first of their seasons ('Premiere') or not ('Not Premiere'). Data from imdb.com" )
+  ggtitle("Are Ratings Affected by Whether an Episode Airs After a Break?",
+          subtitle="Color represents whether episodes are the first of their seasons ('Premiere') or not ('Not Premiere').\nData from imdb.com" )
 ```
 
 ![plot of chunk snl_6](/plots/snl_6-1.png)
@@ -809,7 +778,7 @@ With the obvious caveat that there are only 42 season premieres with which to dr
 ggplot(data=snl.data.enhanced, aes(x=Rating, fill=Premiere)) +
   geom_density(position="identity",alpha=0.5) +
   scale_fill_viridis(discrete=T, name = "", labels=c("Not Premiere","Premiere")) +
-  theme_bw() +
+  theme_bw(16) +
   xlim(0,10) +
   ylim(0,0.5) +
   xlab("Rating") +
@@ -817,7 +786,7 @@ ggplot(data=snl.data.enhanced, aes(x=Rating, fill=Premiere)) +
   annotate("text",x=5,y=0.25,col="red",label=paste0("@mathieubray ",lubridate::year(lubridate::today())),
            alpha=0.15,cex=15,fontface="bold",angle=30) +
   ggtitle("Are Ratings Affected by Whether an Episode is a Season Premiere?",
-          subtitle="Color represents whether episodes are the first of their seasons ('Premiere') or not ('Not Premiere'). Data from imdb.com" )
+          subtitle="Color represents whether episodes are the first of their seasons ('Premiere') or not ('Not Premiere').\nData from imdb.com" )
 ```
 
 ![plot of chunk snl_7](/plots/snl_7-1.png)
@@ -906,14 +875,14 @@ ggplot(data=snl.data.enhanced, aes(x=Rating, fill=ConsecutiveCat)) +
   geom_density(alpha=0.7) +
   facet_wrap(~ConsecutiveCat) +
   scale_fill_viridis(name = "Number of Consecutive Episodes Prior", discrete=T) +
-  theme_bw() +
+  theme_bw(16) +
   xlim(0,10) +
   xlab("Rating") +
   ylab("Density") +
   annotate("text",x=5,y=0.31,col="red",label=paste0("@mathieubray ",lubridate::year(lubridate::today())),
            alpha=0.15,cex=6,fontface="bold",angle=30) +
   theme(legend.position = "bottom") +
-  ggtitle("Does the Number of Consecutive Episodes Prior to an SNL Episode Affect its Rating?",
+  ggtitle("Do Long Sequences of Episodes Affect Ratings?",
           subtitle="Grey curves represent overall ratings density. Data from imdb.com" )
 ```
 
@@ -922,6 +891,4 @@ ggplot(data=snl.data.enhanced, aes(x=Rating, fill=ConsecutiveCat)) +
 The leftmost panel is equivalent to the 'Break' curve shown previously. Episodes that aired as the second in a sequence of episodes (middle panel) see slightly more 'mediocre' episodes and slightly fewer 'good-great' episodes. The rightmost panel, which include episodes airing at the end of a long sequence of episodes, appears to be more spread out, with dips in both of the main modes. While interesting, there may be more at play here. For example, it may make a difference if, for example, the episode is the second in a long sequence of consecutive episodes versus the second episode in a sequence of two consecutive episodes. Perhaps a question for another day...
 
 That's about as much effort as I'm willing to put into this right now. As I said, not super deep, though I have a few ideas on how one can augment this data for some possible additional insights. Anyway, that's it for now. Tune in for more fun stuff from me, and Live... from Ann Arbor... it's Saturday Night! (spent staying in and procrastinating on actual work by writing this instead!)
-
-
 
