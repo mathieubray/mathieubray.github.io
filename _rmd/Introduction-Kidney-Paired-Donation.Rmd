@@ -370,11 +370,8 @@ Let $$Y_i \in \{0,1\}$$ designate whether cycle $$i$$ should be pursued (1) or n
 
 The optimization problem is thus summarized as follows:
 
-$$\max_{\{Y_i\}} \sum_i Y_iU_i$$ 
+$$\max_{\{Y_i\}} \sum_i Y_iU_i \ st. \sum_{i}X_{ij} \leq 1, j \in \{1,...,N\}; \ X_{ij} = Y_iI(\mbox{Node } j \mbox{ is part of Cycle } i), i \in \{1,...,C\}, j \in \{1,...,N\}$$
 
-$$st. \sum_{i}X_{ij} \leq 1, j \in \{1,...,N\}$$
-
-$$\ \ \ \ \ X_{ij} = Y_iI(\mbox{Node } j \mbox{ is part of Cycle } i), i \in \{1,...,C\}, j \in \{1,...,N\}$$
 
 The solution is obtained below. Note that the `sum_expr` function signals the solver to sum over a set of variables. The `cycle_contains_node` function below uses `purrr::map2_lgl` in order to determine whether a node is part of a certain cycle. As such, our second constraint only applies to $$(i,j)$$ combinations where node $$j$$ appears in cycle $$i$$.
 

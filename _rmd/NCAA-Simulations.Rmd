@@ -1,0 +1,15 @@
+---
+title: 'NCAA Simulations'
+author: "Mathieu Bray"
+date: "INSERT DATE"
+tags: [R]
+---
+
+*Code and data can be found on [Github]()*
+
+First, let's load our handy libraries.
+
+```{r,warning=F,message=F}
+library(dplyr)     # Lifeblood of data science
+```
+
