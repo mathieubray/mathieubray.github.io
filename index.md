@@ -2,7 +2,7 @@
 layout: page
 title: Mathieu Bray
 tagline: Biostatistics. Hockey. Data Science. 
-redirect_to: "https://mathieu.bray.com"
+redirect_to: "https://mathieubray.com"
 ---
 
 {% include JB/setup %}
