@@ -34,7 +34,7 @@ author :
 #
 production_url : http://mathieubray.github.io
 
-gems: ["jekyll-sitemap"]
+gems: ["jekyll-sitemap", "jekyll-redirect-from"]
 
 # All Jekyll-Bootstrap specific configurations are namespaced into this hash
 #
