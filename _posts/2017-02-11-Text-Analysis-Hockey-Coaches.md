@@ -4,6 +4,7 @@ author: "Mathieu Bray"
 date: "2017-02-11"
 tags: [R, hockey, text analysis]
 layout: post
+redirect_to: "https://www.mathieubray.com/2017/02/11/text-analysis-hockey-coaches/"
 ---
 *This post was updated on 2017-03-11*
 

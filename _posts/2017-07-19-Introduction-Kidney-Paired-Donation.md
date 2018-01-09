@@ -4,8 +4,8 @@ author: "Mathieu Bray"
 date: "2017-07-19"
 tags: [R, ompr, ggraph, KPD]
 use_math: true
-
 layout: post
+redirect_to: "https://www.mathieubray.com/2017/07/19/introduction-kidney-paired-donation/"
 ---
 
 

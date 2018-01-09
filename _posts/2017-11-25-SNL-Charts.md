@@ -4,6 +4,7 @@ author: "Mathieu Bray"
 date: "2017-11-25"
 tags: [R, IMDb]
 layout: post
+redirect_to: "https://www.mathieubray.com/2017/11/25/snl-charts/"
 ---
 
 

@@ -3,6 +3,7 @@ title: "Interactive NCAA Hockey Player Maps using ggmap, ggimage, ggiraph, and l
 author: "Mathieu Bray"
 date: '2017-05-24'
 tags: [R, hockey, ggmap, ggiraph, ggimage, leaflet]
+redirect_to: "https://www.mathieubray.com/2017/05/24/ncaa-hockey-maps/"
 
 layout: post
 ---

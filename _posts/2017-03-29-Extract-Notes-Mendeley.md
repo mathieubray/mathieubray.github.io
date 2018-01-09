@@ -4,6 +4,7 @@ author: "Mathieu Bray"
 date: "2017-03-29"
 tags: [R, SQL]
 layout: post
+redirect_to: "https://www.mathieubray.com/2017/03/29/extract-notes-mendeley/"
 ---
 
 

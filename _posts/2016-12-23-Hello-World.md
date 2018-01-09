@@ -4,6 +4,7 @@ author: "Mathieu Bray"
 date: "2016-12-23"
 tags: [R, hockey]
 layout: post
+redirect_to: "https://www.mathieubray.com/2016/12/23/hello-world/"
 ---
 *This post was updated on 2017-03-11*
 
